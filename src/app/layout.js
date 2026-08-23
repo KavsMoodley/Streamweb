@@ -2,7 +2,7 @@ import "./globals.css";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Now Showing",
+  title: "streamWeb",
   description: "Browse and watch popular movies",
 };
 
@@ -14,9 +14,9 @@ export default function RootLayout({ children }) {
           <nav className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6">
             <Link
               href="/"
-              className="font-marquee text-2xl tracking-[0.12em] text-[#e8b44d] transition-colors hover:text-[#f4d488]"
+              className="text-xl font-bold tracking-[0.08em] text-[#e8b44d] transition-colors hover:text-[#f4d488]"
             >
-              🎬 NOW SHOWING
+              🎬 streamWeb
             </Link>
             <Link
               href="/"
