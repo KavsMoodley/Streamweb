@@ -1,10 +1,38 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+:root {
+  --bg: #0b0a10;
+  --surface: #16131d;
+  --surface-2: #1d1926;
+  --border: #2b2436;
+  --text: #f4efe6;
+  --muted: #948c9e;
+  --gold: #e8b44d;
+  --gold-soft: rgba(232, 180, 77, 0.45);
+  --crimson: #b32530;
+  --crimson-bright: #c72c38;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background-color: #0B0B10;
-  color: #F5F1E8;
-  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(232, 180, 77, 0.3);
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 .font-marquee {
@@ -12,29 +40,139 @@ body {
   letter-spacing: 0.08em;
 }
 
+/* --- Marquee light strip --- */
 .film-strip {
   height: 14px;
-  background-image: radial-gradient(circle, #0B0B10 3px, transparent 3px);
-  background-color: #E8B44D;
+  background-image: radial-gradient(circle, #0b0a10 3px, transparent 3px);
+  background-color: var(--gold);
   background-size: 20px 14px;
   background-position: center;
+  opacity: 0.85;
 }
 
+/* --- Poster cards --- */
 .ticket-card {
-  background-color: #17141C;
-  border: 1px solid #2A2530;
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+  will-change: transform;
 }
 
 .ticket-card:hover {
-  transform: translateY(-4px);
-  border-color: #E8B44D;
+  transform: translateY(-6px);
+  border-color: var(--gold-soft);
+  box-shadow:
+    0 18px 36px -14px rgba(0, 0, 0, 0.6),
+    0 0 24px -6px rgba(232, 180, 77, 0.18);
 }
 
 .rating-badge {
-  background-color: #A5222B;
-  color: #F5F1E8;
+  background-color: rgba(179, 37, 48, 0.92);
+  color: #fff;
+  backdrop-filter: blur(4px);
 }
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.625rem 1.5rem;
+  transition:
+    transform 0.15s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+  cursor: pointer;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background-color: var(--crimson);
+  color: #fff;
+  box-shadow: 0 8px 24px -10px rgba(179, 37, 48, 0.55);
+}
+
+.btn-primary:hover {
+  background-color: var(--crimson-bright);
+  box-shadow: 0 12px 28px -10px rgba(199, 44, 56, 0.7);
+}
+
+.btn-ghost {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-ghost:hover {
+  border-color: var(--gold-soft);
+  color: var(--gold);
+}
+
+/* --- Small label pill --- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+}
+
+.chip-gold {
+  border-color: rgba(232, 180, 77, 0.35);
+  background-color: rgba(232, 180, 77, 0.12);
+  color: var(--gold);
+}
+
+/* --- Entrance animations --- */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fade-up {
+  animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.fade-up-1 { animation-delay: 0.08s; }
+.fade-up-2 { animation-delay: 0.16s; }
+.fade-up-3 { animation-delay: 0.24s; }
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .fade-up,
+  .ticket-card,
+  .btn {
+    animation: none;
+    transition-duration: 0.01ms;
+  }
+}
+
 .scrollbar-thin {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge legacy */

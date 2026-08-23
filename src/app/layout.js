@@ -9,18 +9,40 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
-        <header className="flex items-center justify-between px-6 py-4 border-b border-[#2A2530]">
-          <Link href="/" className="font-marquee text-2xl text-[#E8B44D] tracking-wider">
-            🎬 NOW SHOWING
-          </Link>
+      <body className="flex min-h-dvh flex-col">
+        <header className="sticky top-0 z-50 border-b border-[#2b2436]/80 bg-[#0b0a10]/85 backdrop-blur-md">
+          <nav className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6">
+            <Link
+              href="/"
+              className="font-marquee text-2xl tracking-[0.12em] text-[#e8b44d] transition-colors hover:text-[#f4d488]"
+            >
+              🎬 NOW SHOWING
+            </Link>
+            <Link
+              href="/"
+              className="text-sm font-medium text-[#948c9e] transition-colors hover:text-[#e8b44d]"
+            >
+              Home
+            </Link>
+          </nav>
         </header>
 
-        {children}
+        <main className="flex-1">{children}</main>
 
-        <div className="film-strip mt-12" />
-        <footer className="text-center py-6 text-sm text-[#8B8594]">
-          Built by <span className="text-[#E8B44D] font-semibold">Kavs Moodley this is legal i promise</span>
+        <footer className="mt-16">
+          <div className="film-strip" />
+          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-6 text-center text-sm text-[#948c9e] sm:flex-row sm:px-6 sm:text-left">
+            <p>
+              Built by{" "}
+              <span className="font-semibold text-[#e8b44d]">
+                Kavs Moodley this is legal i promise
+              </span>
+            </p>
+            <p className="text-xs">
+              This product uses the TMDB API but is not endorsed or certified by
+              TMDB.
+            </p>
+          </div>
         </footer>
       </body>
     </html>

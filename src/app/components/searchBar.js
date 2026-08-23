@@ -64,62 +64,99 @@ export default function SearchBar() {
     router.push(`/movie/${movieId}`);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      setShowDropdown(false);
+      e.target.blur();
+    }
+  };
+
   return (
-    <div ref={wrapperRef} className="relative flex justify-center pt-6">
-      <form onSubmit={handleSearch} className="flex gap-2 w-full max-w-md px-4">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => query.length >= 2 && setShowDropdown(true)}
-          placeholder="Search movies..."
-          className="bg-[#17141C] border border-[#2A2530] rounded-lg px-4 py-2 w-full text-[#F5F1E8] focus:outline-none focus:border-[#E8B44D]"
-          autoComplete="off"
-        />
-        <button
-          type="submit"
-          className="bg-[#A5222B] hover:bg-[#c22833] text-white font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap"
-        >
-          Search
-        </button>
-      </form>
+    <div ref={wrapperRef} className="relative flex justify-center pt-8">
+      <div className="relative w-full max-w-md">
+        <form onSubmit={handleSearch} className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <svg
+              className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f6879]"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"
+              />
+            </svg>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => query.length >= 2 && suggestions.length > 0 && setShowDropdown(true)}
+              onKeyDown={handleKeyDown}
+              placeholder="Search movies..."
+              aria-label="Search movies"
+              className="w-full rounded-full border border-[#2b2436] bg-[#16131d] py-2.5 pl-11 pr-4 text-sm text-[#f4efe6] placeholder:text-[#6f6879] transition-all duration-200 focus:border-[#e8b44d]/60 focus:shadow-[0_0_0_4px_rgba(232,180,77,0.12)] focus:outline-none"
+              autoComplete="off"
+            />
+          </div>
+          <button type="submit" className="btn btn-primary px-5 py-2.5 text-sm">
+            Search
+          </button>
+        </form>
 
-      {showDropdown && (
-        <div className="absolute top-[calc(100%+4px)] w-full max-w-md mx-4 bg-[#17141C] border border-[#2A2530] rounded-lg overflow-hidden shadow-xl z-50">
-          {loading && (
-            <p className="text-[#8B8594] text-sm px-4 py-3">Searching...</p>
-          )}
+        {showDropdown && (
+          <div className="absolute top-[calc(100%+8px)] left-0 z-50 w-full overflow-hidden rounded-xl border border-[#2b2436] bg-[#16131d] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.7)]">
+            {loading && (
+              <p className="flex items-center gap-2 px-4 py-3 text-sm text-[#948c9e]">
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[#e8b44d] border-t-transparent" />
+                Searching…
+              </p>
+            )}
 
-          {!loading && suggestions.length === 0 && (
-            <p className="text-[#8B8594] text-sm px-4 py-3">No matches found.</p>
-          )}
+            {!loading && suggestions.length === 0 && (
+              <p className="px-4 py-3 text-sm text-[#948c9e]">
+                No matches found.
+              </p>
+            )}
 
-          {!loading &&
-            suggestions.map((movie) => (
-              <button
-                key={movie.id}
-                onClick={() => handleSelect(movie.id)}
-                className="flex items-center gap-3 w-full text-left px-3 py-2 hover:bg-[#2A2530] transition-colors"
-              >
-                {movie.poster_path ? (
-                  <img
-                    src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
-                    alt={movie.title}
-                    className="w-10 h-14 object-cover rounded"
-                  />
-                ) : (
-                  <div className="w-10 h-14 bg-[#2A2530] rounded flex-shrink-0" />
-                )}
-                <div>
-                  <p className="text-[#F5F1E8] text-sm font-medium">{movie.title}</p>
-                  <p className="text-[#8B8594] text-xs">
-                    {movie.release_date ? movie.release_date.slice(0, 4) : "N/A"}
-                  </p>
-                </div>
-              </button>
-            ))}
-        </div>
-      )}
+            {!loading &&
+              suggestions.map((movie) => (
+                <button
+                  key={movie.id}
+                  onClick={() => handleSelect(movie.id)}
+                  className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-[#231d2e]"
+                >
+                  {movie.poster_path ? (
+                    <img
+                      src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
+                      alt=""
+                      aria-hidden="true"
+                      loading="lazy"
+                      className="h-14 w-10 shrink-0 rounded-md object-cover"
+                    />
+                  ) : (
+                    <div className="h-14 w-10 shrink-0 rounded-md bg-[#2b2436]" />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-[#f4efe6]">
+                      {movie.title}
+                    </p>
+                    <p className="text-xs text-[#948c9e]">
+                      {movie.release_date
+                        ? movie.release_date.slice(0, 4)
+                        : "N/A"}
+                      {movie.vote_average > 0 &&
+                        ` · ★ ${movie.vote_average.toFixed(1)}`}
+                    </p>
+                  </div>
+                </button>
+              ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
