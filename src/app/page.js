@@ -4,12 +4,17 @@ import SearchBar from "./components/searchBar";
 import MovieRow from "./components/movierow";
 
 export default async function Home() {
-  const [popular, topRated, nowPlaying, upcoming] = await Promise.all([
-    tmdb("/movie/popular"),
-    tmdb("/movie/top_rated"),
-    tmdb("/movie/now_playing"),
-    tmdb("/movie/upcoming"),
-  ]);
+  const [popular, topRated, nowPlaying, upcoming, trendingTv, popularTv, topRatedTv, onTheAir] =
+    await Promise.all([
+      tmdb("/movie/popular"),
+      tmdb("/movie/top_rated"),
+      tmdb("/movie/now_playing"),
+      tmdb("/movie/upcoming"),
+      tmdb("/trending/tv/week"),
+      tmdb("/tv/popular"),
+      tmdb("/tv/top_rated"),
+      tmdb("/tv/on_the_air"),
+    ]);
 
   const featured = popular.results[0];
   const year = featured.release_date ? featured.release_date.slice(0, 4) : null;
@@ -57,9 +62,13 @@ export default async function Home() {
       </div>
 
       <div className="mt-8 space-y-4">
+        <MovieRow title="Trending Shows" movies={trendingTv.results} type="tv" />
         <MovieRow title="Popular" movies={popular.results} />
+        <MovieRow title="Popular Series" movies={popularTv.results} type="tv" />
         <MovieRow title="Top Rated" movies={topRated.results} />
+        <MovieRow title="Top Rated Series" movies={topRatedTv.results} type="tv" />
         <MovieRow title="Now Playing" movies={nowPlaying.results} />
+        <MovieRow title="On The Air" movies={onTheAir.results} type="tv" />
         <MovieRow title="Upcoming" movies={upcoming.results} />
       </div>
     </div>

@@ -41,14 +41,18 @@ export async function GET(request) {
   }
 
   try {
-    const data = await tmdb("/search/movie", { query });
-    const results = (data.results ?? []).slice(0, 6).map((movie) => ({
-      id: movie.id,
-      title: movie.title,
-      poster_path: movie.poster_path,
-      release_date: movie.release_date,
-      vote_average: movie.vote_average,
-    }));
+    const data = await tmdb("/search/multi", { query });
+    const results = (data.results ?? [])
+      .filter((r) => r.media_type === "movie" || r.media_type === "tv")
+      .slice(0, 6)
+      .map((r) => ({
+        id: r.id,
+        media_type: r.media_type,
+        title: r.title ?? r.name,
+        poster_path: r.poster_path,
+        release_date: r.release_date ?? r.first_air_date,
+        vote_average: r.vote_average,
+      }));
     return NextResponse.json({ results });
   } catch {
     return NextResponse.json(

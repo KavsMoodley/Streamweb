@@ -22,17 +22,19 @@ export default async function SearchResults({ searchParams }) {
     );
   }
 
-  let movies = [];
+  let results = [];
   try {
-    const data = await tmdb("/search/movie", { query });
-    movies = data.results ?? [];
+    const data = await tmdb("/search/multi", { query });
+    results = (data.results ?? []).filter(
+      (r) => r.media_type === "movie" || r.media_type === "tv"
+    );
   } catch {
-    movies = [];
+    results = [];
   }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-      {movies.length === 0 ? (
+      {results.length === 0 ? (
         <div className="mx-auto mt-12 max-w-md rounded-xl border border-[#2b2436] bg-[#16131d] p-8 text-center">
           <p className="font-marquee text-3xl text-[#e8b44d]">No showtimes found</p>
           <p className="mt-2 text-sm text-[#948c9e]">
@@ -49,39 +51,57 @@ export default async function SearchResults({ searchParams }) {
             Results for <span className="text-[#e8b44d]">“{query}”</span>
           </h1>
           <p className="mt-1 text-sm text-[#948c9e]">
-            {movies.length} title{movies.length === 1 ? "" : "s"} found
+            {results.length} title{results.length === 1 ? "" : "s"} found
           </p>
 
           <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {movies.map((movie) => (
-              <Link key={movie.id} href={`/movie/${movie.id}`} className="group">
-                <div className="ticket-card relative overflow-hidden rounded-lg">
-                  {movie.vote_average > 0 && (
-                    <span className="rating-badge absolute right-2 top-2 z-10 rounded-md px-2 py-1 text-xs font-bold">
-                      ★ {movie.vote_average.toFixed(1)}
+            {results.map((item) => {
+              const isTv = item.media_type === "tv";
+              const name = item.title ?? item.name;
+              const date = item.release_date ?? item.first_air_date;
+              return (
+                <Link
+                  key={`${item.media_type}-${item.id}`}
+                  href={isTv ? `/tv/${item.id}` : `/movie/${item.id}`}
+                  className="group"
+                >
+                  <div className="ticket-card relative overflow-hidden rounded-lg">
+                    {item.vote_average > 0 && (
+                      <span className="rating-badge absolute right-2 top-2 z-10 rounded-md px-2 py-1 text-xs font-bold">
+                        ★ {item.vote_average.toFixed(1)}
+                      </span>
+                    )}
+                    <span
+                      className={`absolute left-2 top-2 z-10 rounded-md px-2 py-1 text-[10px] font-bold tracking-wide ${
+                        isTv
+                          ? "bg-sky-500/20 text-sky-400"
+                          : "bg-[#0b0a10]/85 text-[#e8b44d]"
+                      }`}
+                    >
+                      {isTv ? "SERIES" : "MOVIE"}
                     </span>
-                  )}
-                  {movie.poster_path ? (
-                    <img
-                      src={`https://image.tmdb.org/t/p/w342${movie.poster_path}`}
-                      alt={`${movie.title} poster`}
-                      loading="lazy"
-                      className="aspect-[2/3] w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex aspect-[2/3] w-full items-center justify-center bg-[#231d2e] text-3xl font-bold text-[#6f6879]">
-                      {movie.title.charAt(0)}
-                    </div>
-                  )}
-                </div>
-                <p className="mt-2 truncate text-sm font-medium transition-colors group-hover:text-[#e8b44d]">
-                  {movie.title}
-                </p>
-                <p className="text-xs text-[#948c9e]">
-                  {movie.release_date ? movie.release_date.slice(0, 4) : ""}
-                </p>
-              </Link>
-            ))}
+                    {item.poster_path ? (
+                      <img
+                        src={`https://image.tmdb.org/t/p/w342${item.poster_path}`}
+                        alt={`${name} poster`}
+                        loading="lazy"
+                        className="aspect-[2/3] w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex aspect-[2/3] w-full items-center justify-center bg-[#231d2e] text-3xl font-bold text-[#6f6879]">
+                        {name.charAt(0)}
+                      </div>
+                    )}
+                  </div>
+                  <p className="mt-2 truncate text-sm font-medium transition-colors group-hover:text-[#e8b44d]">
+                    {name}
+                  </p>
+                  <p className="text-xs text-[#948c9e]">
+                    {date ? date.slice(0, 4) : ""}
+                  </p>
+                </Link>
+              );
+            })}
           </div>
         </>
       )}

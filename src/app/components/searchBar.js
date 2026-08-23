@@ -64,10 +64,12 @@ export default function SearchBar() {
     }
   };
 
-  const handleSelect = (movieId) => {
+  const handleSelect = (item) => {
     setShowDropdown(false);
     setQuery("");
-    router.push(`/movie/${movieId}`);
+    router.push(
+      item.media_type === "tv" ? `/tv/${item.id}` : `/movie/${item.id}`
+    );
   };
 
   const handleKeyDown = (e) => {
@@ -104,8 +106,8 @@ export default function SearchBar() {
                 query.length >= 2 && suggestions.length > 0 && setShowDropdown(true)
               }
               onKeyDown={handleKeyDown}
-              placeholder="Search movies..."
-              aria-label="Search movies"
+              placeholder="Search movies & shows..."
+              aria-label="Search movies and TV shows"
               maxLength={80}
               className="w-full rounded-full border border-[#2b2436] bg-[#16131d] py-2.5 pl-11 pr-4 text-sm text-[#f4efe6] placeholder:text-[#6f6879] transition-all duration-200 focus:border-[#e8b44d]/60 focus:shadow-[0_0_0_4px_rgba(232,180,77,0.12)] focus:outline-none"
               autoComplete="off"
@@ -132,15 +134,15 @@ export default function SearchBar() {
             )}
 
             {!loading &&
-              suggestions.map((movie) => (
+              suggestions.map((item) => (
                 <button
-                  key={movie.id}
-                  onClick={() => handleSelect(movie.id)}
+                  key={`${item.media_type}-${item.id}`}
+                  onClick={() => handleSelect(item)}
                   className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-[#231d2e]"
                 >
-                  {movie.poster_path ? (
+                  {item.poster_path ? (
                     <img
-                      src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
+                      src={`https://image.tmdb.org/t/p/w92${item.poster_path}`}
                       alt=""
                       aria-hidden="true"
                       loading="lazy"
@@ -149,16 +151,25 @@ export default function SearchBar() {
                   ) : (
                     <div className="h-14 w-10 shrink-0 rounded-md bg-[#2b2436]" />
                   )}
-                  <div>
-                    <p className="text-sm font-medium text-[#f4efe6]">
-                      {movie.title}
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-[#f4efe6]">
+                      <span
+                        className={`mr-1.5 rounded px-1 py-0.5 text-[10px] font-bold ${
+                          item.media_type === "tv"
+                            ? "bg-sky-500/15 text-sky-400"
+                            : "bg-[#e8b44d]/15 text-[#e8b44d]"
+                        }`}
+                      >
+                        {item.media_type === "tv" ? "TV" : "MOVIE"}
+                      </span>
+                      {item.title}
                     </p>
                     <p className="text-xs text-[#948c9e]">
-                      {movie.release_date
-                        ? movie.release_date.slice(0, 4)
+                      {item.release_date
+                        ? item.release_date.slice(0, 4)
                         : "N/A"}
-                      {movie.vote_average > 0 &&
-                        ` · ★ ${movie.vote_average.toFixed(1)}`}
+                      {item.vote_average > 0 &&
+                        ` · ★ ${item.vote_average.toFixed(1)}`}
                     </p>
                   </div>
                 </button>
