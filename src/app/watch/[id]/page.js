@@ -43,7 +43,7 @@ export default async function Watch({ params, searchParams }) {
     isTv && episodeNum < episodes.length ? episodeNum + 1 : null;
 
   const embedUrl = isTv
-    ? `https://vidsrc.sbs/embed/tv/${id}/${seasonNum}-${episodeNum}`
+    ? `https://vidsrc.sbs/embed/tv/${id}/${seasonNum}/${episodeNum}`
     : `https://vidsrc.sbs/embed/movie/${id}`;
 
   const heading = isTv
