@@ -29,6 +29,7 @@ export default async function SearchResults({ searchParams }) {
           </Link>
         ))}
       </div>
-    </div>
-  );
+    </div> 
+    
+  ); 
 }
