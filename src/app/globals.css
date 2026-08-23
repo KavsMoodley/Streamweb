@@ -35,3 +35,13 @@ body {
   background-color: #A5222B;
   color: #F5F1E8;
 }
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #2A2530;
+  border-radius: 3px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: #E8B44D;
+}
