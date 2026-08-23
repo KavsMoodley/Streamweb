@@ -34,7 +34,7 @@ A fast, dark-cinema-styled movie discovery and streaming site built with **Next.
 ### 1. Clone & install
 
 ```bash
-git clone https://github.com/KavsMoodley/moviesite.git
+git clone https://github.com/KavsMoodley/Streamweb.git
 cd moviesite
 npm install
 ```
