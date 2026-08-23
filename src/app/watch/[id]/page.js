@@ -20,6 +20,7 @@ export default async function WatchMovie({ params }) {
         <iframe
           src={embedUrl}
           className="w-full h-[500px] border-none rounded-lg"
+           allow="autoplay; encrypted-media; picture-in-picture"
           allowFullScreen
         ></iframe>
       </div>
