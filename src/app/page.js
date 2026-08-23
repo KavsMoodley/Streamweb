@@ -1,19 +1,17 @@
-import axios from "axios";
 import Link from "next/link";
+import { tmdb } from "@/lib/tmdb-server";
 import SearchBar from "./components/searchBar";
 import MovieRow from "./components/movierow";
 
 export default async function Home() {
-  const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
-
   const [popular, topRated, nowPlaying, upcoming] = await Promise.all([
-    axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`),
-    axios.get(`https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}`),
-    axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${API_KEY}`),
-    axios.get(`https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}`),
+    tmdb("/movie/popular"),
+    tmdb("/movie/top_rated"),
+    tmdb("/movie/now_playing"),
+    tmdb("/movie/upcoming"),
   ]);
 
-  const featured = popular.data.results[0];
+  const featured = popular.results[0];
   const year = featured.release_date ? featured.release_date.slice(0, 4) : null;
 
   return (
@@ -59,10 +57,10 @@ export default async function Home() {
       </div>
 
       <div className="mt-8 space-y-4">
-        <MovieRow title="Popular" movies={popular.data.results} />
-        <MovieRow title="Top Rated" movies={topRated.data.results} />
-        <MovieRow title="Now Playing" movies={nowPlaying.data.results} />
-        <MovieRow title="Upcoming" movies={upcoming.data.results} />
+        <MovieRow title="Popular" movies={popular.results} />
+        <MovieRow title="Top Rated" movies={topRated.results} />
+        <MovieRow title="Now Playing" movies={nowPlaying.results} />
+        <MovieRow title="Upcoming" movies={upcoming.results} />
       </div>
     </div>
   );

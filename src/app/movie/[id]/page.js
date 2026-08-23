@@ -1,14 +1,17 @@
 import Link from "next/link";
-import axios from "axios";
+import { notFound } from "next/navigation";
+import { tmdb } from "@/lib/tmdb-server";
 
 export default async function MovieDetail({ params }) {
   const { id } = await params;
-  const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
+  if (!/^\d+$/.test(id)) notFound();
 
-  const movieResponse = await axios.get(
-    `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}`
-  );
-  const movie = movieResponse.data;
+  let movie;
+  try {
+    movie = await tmdb(`/movie/${id}`);
+  } catch {
+    notFound();
+  }
 
   const year = movie.release_date ? movie.release_date.slice(0, 4) : null;
   const runtime =

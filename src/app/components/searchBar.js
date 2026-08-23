@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 
 export default function SearchBar() {
   const [query, setQuery] = useState("");
@@ -10,8 +9,6 @@ export default function SearchBar() {
   const [loading, setLoading] = useState(false);
   const wrapperRef = useRef(null);
   const router = useRouter();
-
-  const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 
   // Debounced fetch of suggestions as the user types
   useEffect(() => {
@@ -22,22 +19,31 @@ export default function SearchBar() {
     }
 
     setLoading(true);
+    const controller = new AbortController();
     const timer = setTimeout(async () => {
       try {
-        const res = await axios.get(
-          `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`
+        const res = await fetch(
+          `/api/search?query=${encodeURIComponent(query)}`,
+          { signal: controller.signal }
         );
-        setSuggestions(res.data.results.slice(0, 6));
+        if (!res.ok) throw new Error("Search failed");
+        const data = await res.json();
+        setSuggestions(data.results ?? []);
         setShowDropdown(true);
       } catch (err) {
-        setSuggestions([]);
+        if (err.name !== "AbortError") {
+          setSuggestions([]);
+        }
       } finally {
         setLoading(false);
       }
     }, 300); // wait 300ms after typing stops before firing the request
 
-    return () => clearTimeout(timer);
-  }, [query, API_KEY]);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [query]);
 
   // Close dropdown when clicking outside the search bar
   useEffect(() => {
@@ -94,10 +100,13 @@ export default function SearchBar() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              onFocus={() => query.length >= 2 && suggestions.length > 0 && setShowDropdown(true)}
+              onFocus={() =>
+                query.length >= 2 && suggestions.length > 0 && setShowDropdown(true)
+              }
               onKeyDown={handleKeyDown}
               placeholder="Search movies..."
               aria-label="Search movies"
+              maxLength={80}
               className="w-full rounded-full border border-[#2b2436] bg-[#16131d] py-2.5 pl-11 pr-4 text-sm text-[#f4efe6] placeholder:text-[#6f6879] transition-all duration-200 focus:border-[#e8b44d]/60 focus:shadow-[0_0_0_4px_rgba(232,180,77,0.12)] focus:outline-none"
               autoComplete="off"
             />

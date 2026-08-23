@@ -1,15 +1,19 @@
 import Link from "next/link";
-import axios from "axios";
+import { notFound } from "next/navigation";
+import { tmdb } from "@/lib/tmdb-server";
 
 export default async function WatchMovie({ params }) {
   const { id } = await params;
-  const embedUrl = `https://vidsrc.sbs/embed/movie/${id}`;
-  const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
+  if (!/^\d+$/.test(id)) notFound();
 
-  const response = await axios.get(
-    `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}`
-  );
-  const movie = response.data;
+  const embedUrl = `https://vidsrc.sbs/embed/movie/${id}`;
+
+  let movie;
+  try {
+    movie = await tmdb(`/movie/${id}`);
+  } catch {
+    notFound();
+  }
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
@@ -29,6 +33,8 @@ export default async function WatchMovie({ params }) {
           src={embedUrl}
           title={`${movie.title} player`}
           className="aspect-video w-full"
+          sandbox="allow-scripts allow-same-origin allow-presentation"
+          referrerPolicy="no-referrer"
           allow="autoplay; encrypted-media; picture-in-picture"
           allowFullScreen
         />

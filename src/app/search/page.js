@@ -1,14 +1,34 @@
 import Link from "next/link";
+import { tmdb } from "@/lib/tmdb-server";
 
 export default async function SearchResults({ searchParams }) {
-  const { query } = await searchParams;
-  const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
+  const query = ((await searchParams).query ?? "")
+    .trim()
+    .slice(0, 80);
 
-  const res = await fetch(
-    `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`
-  );
-  const data = await res.json();
-  const movies = data.results ?? [];
+  if (!query) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+        <div className="mx-auto mt-12 max-w-md rounded-xl border border-[#2b2436] bg-[#16131d] p-8 text-center">
+          <p className="font-marquee text-3xl text-[#e8b44d]">What are we watching?</p>
+          <p className="mt-2 text-sm text-[#948c9e]">
+            Type a movie title in the search bar to find something to watch.
+          </p>
+          <Link href="/" className="btn btn-ghost mt-6">
+            ← Back to home
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  let movies = [];
+  try {
+    const data = await tmdb("/search/movie", { query });
+    movies = data.results ?? [];
+  } catch {
+    movies = [];
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
