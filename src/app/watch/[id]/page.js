@@ -24,5 +24,5 @@ export default async function WatchMovie({ params }) {
         ></iframe>
       </div>
     </div>
-  );S
+  );
 }
