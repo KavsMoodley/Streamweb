@@ -8,7 +8,7 @@ const csp = [
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' https://image.tmdb.org data:",
   "connect-src 'self'",
-  "frame-src https://vidsrc.sbs",
+  "frame-src https://vidsrc.sbs https://2embed.org",
   "frame-ancestors 'self'",
   "base-uri 'self'",
   "form-action 'self'",
