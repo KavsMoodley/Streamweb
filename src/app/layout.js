@@ -1,5 +1,6 @@
 import "./globals.css";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata = {
   title: "streamWeb",
@@ -18,12 +19,26 @@ export default function RootLayout({ children }) {
             >
               🎬 streamWeb
             </Link>
-            <Link
-              href="/"
-              className="text-sm font-medium text-[#948c9e] transition-colors hover:text-[#e8b44d]"
-            >
-              Home
-            </Link>
+            <div className="flex items-center gap-5">
+              <Link
+                href="/browse?type=movie"
+                className="text-sm font-medium text-[#948c9e] transition-colors hover:text-[#e8b44d]"
+              >
+                Movies
+              </Link>
+              <Link
+                href="/browse?type=tv"
+                className="text-sm font-medium text-[#948c9e] transition-colors hover:text-[#e8b44d]"
+              >
+                Series
+              </Link>
+              <Link
+                href="/"
+                className="text-sm font-medium text-[#948c9e] transition-colors hover:text-[#e8b44d]"
+              >
+                Home
+              </Link>
+            </div>
           </nav>
         </header>
 
@@ -44,6 +59,8 @@ export default function RootLayout({ children }) {
             </p>
           </div>
         </footer>
+
+        <Analytics />
       </body>
     </html>
   );

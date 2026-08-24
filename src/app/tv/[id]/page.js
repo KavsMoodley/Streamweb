@@ -1,6 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { tmdb } from "@/lib/tmdb-server";
+import CastRow from "../../components/castrow";
 
 export default async function TvDetail({ params }) {
   const { id } = await params;
@@ -8,7 +10,7 @@ export default async function TvDetail({ params }) {
 
   let show;
   try {
-    show = await tmdb(`/tv/${id}`);
+    show = await tmdb(`/tv/${id}`, { append_to_response: "credits" });
   } catch {
     notFound();
   }
@@ -30,11 +32,13 @@ export default async function TvDetail({ params }) {
       {/* Backdrop */}
       <div className="absolute inset-x-0 top-0 h-[420px] overflow-hidden md:h-[480px]">
         {show.backdrop_path ? (
-          <img
+          <Image
             src={`https://image.tmdb.org/t/p/original${show.backdrop_path}`}
             alt=""
             aria-hidden="true"
-            className="h-full w-full object-cover opacity-30"
+            fill
+            sizes="100vw"
+            className="object-cover opacity-30"
           />
         ) : (
           <div className="h-full w-full bg-[#16131d]" />
@@ -52,9 +56,12 @@ export default async function TvDetail({ params }) {
 
         <div className="mt-8 flex flex-col gap-8 md:flex-row md:gap-10">
           {show.poster_path && (
-            <img
+            <Image
               src={`https://image.tmdb.org/t/p/w500${show.poster_path}`}
               alt={`${show.name} poster`}
+              width={500}
+              height={750}
+              priority
               className="fade-up w-52 shrink-0 self-start rounded-xl border border-[#2b2436] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.7)] md:w-64"
             />
           )}
@@ -113,6 +120,9 @@ export default async function TvDetail({ params }) {
           </div>
         </div>
 
+        {/* Cast */}
+        <CastRow cast={show.credits?.cast ?? []} />
+
         {/* Seasons */}
         {seasons.length > 0 && (
           <section className="mt-14">
@@ -130,20 +140,24 @@ export default async function TvDetail({ params }) {
                   href={`/tv/${id}/season/${season.season_number}`}
                   className="group"
                 >
-                  <div className="ticket-card relative overflow-hidden rounded-lg">
+                  <div className="ticket-card relative aspect-[2/3] overflow-hidden rounded-lg">
                     {season.poster_path ? (
-                      <img
+                      <Image
                         src={`https://image.tmdb.org/t/p/w342${season.poster_path}`}
                         alt={`${season.name} poster`}
+                        fill
+                        sizes="(min-width: 640px) 25vw, 50vw"
                         loading="lazy"
-                        className="aspect-[2/3] w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+                        className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
                       />
                     ) : show.poster_path ? (
-                      <img
+                      <Image
                         src={`https://image.tmdb.org/t/p/w342${show.poster_path}`}
                         alt={`${season.name} poster`}
+                        fill
+                        sizes="(min-width: 640px) 25vw, 50vw"
                         loading="lazy"
-                        className="aspect-[2/3] w-full object-cover opacity-70 transition-transform duration-300 ease-out group-hover:scale-105"
+                        className="object-cover opacity-70 transition-transform duration-300 ease-out group-hover:scale-105"
                       />
                     ) : (
                       <div className="flex aspect-[2/3] w-full items-center justify-center bg-[#231d2e] text-3xl font-bold text-[#6f6879]">

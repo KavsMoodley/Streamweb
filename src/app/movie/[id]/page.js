@@ -1,6 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { tmdb } from "@/lib/tmdb-server";
+import CastRow from "../../components/castrow";
 
 export default async function MovieDetail({ params }) {
   const { id } = await params;
@@ -8,7 +10,7 @@ export default async function MovieDetail({ params }) {
 
   let movie;
   try {
-    movie = await tmdb(`/movie/${id}`);
+    movie = await tmdb(`/movie/${id}`, { append_to_response: "credits" });
   } catch {
     notFound();
   }
@@ -24,11 +26,13 @@ export default async function MovieDetail({ params }) {
       {/* Backdrop */}
       <div className="absolute inset-x-0 top-0 h-[420px] overflow-hidden md:h-[480px]">
         {movie.backdrop_path ? (
-          <img
+          <Image
             src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
             alt=""
             aria-hidden="true"
-            className="h-full w-full object-cover opacity-30"
+            fill
+            sizes="100vw"
+            className="object-cover opacity-30"
           />
         ) : (
           <div className="h-full w-full bg-[#16131d]" />
@@ -46,9 +50,12 @@ export default async function MovieDetail({ params }) {
 
         <div className="mt-8 flex flex-col gap-8 md:flex-row md:gap-10">
           {movie.poster_path && (
-            <img
+            <Image
               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               alt={`${movie.title} poster`}
+              width={500}
+              height={750}
+              priority
               className="fade-up w-52 shrink-0 self-start rounded-xl border border-[#2b2436] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.7)] md:w-64"
             />
           )}
@@ -96,6 +103,8 @@ export default async function MovieDetail({ params }) {
             </div>
           </div>
         </div>
+
+        <CastRow cast={movie.credits?.cast ?? []} />
       </div>
     </div>
   );

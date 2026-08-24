@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { tmdb } from "@/lib/tmdb-server";
 
 export default async function SearchResults({ searchParams }) {
@@ -65,7 +66,7 @@ export default async function SearchResults({ searchParams }) {
                   href={isTv ? `/tv/${item.id}` : `/movie/${item.id}`}
                   className="group"
                 >
-                  <div className="ticket-card relative overflow-hidden rounded-lg">
+                  <div className="ticket-card relative aspect-[2/3] overflow-hidden rounded-lg">
                     {item.vote_average > 0 && (
                       <span className="rating-badge absolute right-2 top-2 z-10 rounded-md px-2 py-1 text-xs font-bold">
                         ★ {item.vote_average.toFixed(1)}
@@ -81,11 +82,13 @@ export default async function SearchResults({ searchParams }) {
                       {isTv ? "SERIES" : "MOVIE"}
                     </span>
                     {item.poster_path ? (
-                      <img
+                      <Image
                         src={`https://image.tmdb.org/t/p/w342${item.poster_path}`}
                         alt={`${name} poster`}
+                        fill
+                        sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
                         loading="lazy"
-                        className="aspect-[2/3] w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+                        className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
                       />
                     ) : (
                       <div className="flex aspect-[2/3] w-full items-center justify-center bg-[#231d2e] text-3xl font-bold text-[#6f6879]">

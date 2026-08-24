@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { tmdb } from "@/lib/tmdb-server";
 
@@ -53,13 +54,15 @@ export default async function SeasonPage({ params }) {
             href={`/watch/${id}?type=tv&season=${num}&episode=${ep.episode_number}`}
             className="group flex gap-4 rounded-xl border border-[#2b2436] bg-[#16131d] p-3 transition-all duration-200 hover:border-[#e8b44d]/50 hover:bg-[#231d2e] sm:gap-5 sm:p-4"
           >
-            <div className="relative w-36 shrink-0 overflow-hidden rounded-lg sm:w-52">
+            <div className="relative aspect-video w-36 shrink-0 overflow-hidden rounded-lg sm:w-52">
               {ep.still_path ? (
-                <img
+                <Image
                   src={`https://image.tmdb.org/t/p/w300${ep.still_path}`}
                   alt={`Episode ${ep.episode_number} still`}
+                  fill
+                  sizes="(min-width: 640px) 208px, 144px"
                   loading="lazy"
-                  className="aspect-video w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+                  className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
                 />
               ) : (
                 <div className="flex aspect-video w-full items-center justify-center bg-[#231d2e] font-marquee text-3xl text-[#6f6879]">

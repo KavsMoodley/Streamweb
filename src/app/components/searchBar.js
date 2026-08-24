@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function SearchBar() {
   const [query, setQuery] = useState("");
@@ -141,10 +142,12 @@ export default function SearchBar() {
                   className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-[#231d2e]"
                 >
                   {item.poster_path ? (
-                    <img
+                    <Image
                       src={`https://image.tmdb.org/t/p/w92${item.poster_path}`}
                       alt=""
                       aria-hidden="true"
+                      width={92}
+                      height={138}
                       loading="lazy"
                       className="h-14 w-10 shrink-0 rounded-md object-cover"
                     />

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { tmdb } from "@/lib/tmdb-server";
 import SearchBar from "./components/searchBar";
 import MovieRow from "./components/movierow";
@@ -23,11 +24,14 @@ export default async function Home() {
     <div>
       {/* Hero banner using the top popular movie */}
       <section className="relative flex min-h-[440px] items-end md:min-h-[540px]">
-        <img
+        <Image
           src={`https://image.tmdb.org/t/p/original${featured.backdrop_path}`}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0b0a10] via-[#0b0a10]/45 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0b0a10]/85 via-[#0b0a10]/25 to-transparent" />
