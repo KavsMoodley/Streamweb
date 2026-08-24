@@ -8,7 +8,6 @@ export default async function Watch({ params, searchParams }) {
 
   const sp = await searchParams;
   const isTv = sp.type === "tv";
-  const server = sp.server === "vidsrc" ? "vidsrc" : "2embed";
 
   let seasonNum = null;
   let episodeNum = null;
@@ -44,23 +43,8 @@ export default async function Watch({ params, searchParams }) {
     isTv && episodeNum < episodes.length ? episodeNum + 1 : null;
 
   const embedUrl = isTv
-    ? server === "vidsrc"
-      ? `https://vidsrc.sbs/embed/tv/${id}/${seasonNum}/${episodeNum}`
-      : `https://2embed.org/embed/${id}?s=${seasonNum}&e=${episodeNum}`
-    : server === "vidsrc"
-      ? `https://vidsrc.sbs/embed/movie/${id}`
-      : `https://2embed.org/embed/${id}`;
-
-  const serverHref = (s) => {
-    const p = new URLSearchParams();
-    if (isTv) {
-      p.set("type", "tv");
-      p.set("season", String(seasonNum));
-      p.set("episode", String(episodeNum));
-    }
-    if (s !== "2embed") p.set("server", s);
-    return `/watch/${id}?${p.toString()}`;
-  };
+    ? `https://vidsrc.sbs/embed/tv/${id}/${seasonNum}/${episodeNum}`
+    : `https://vidsrc.sbs/embed/movie/${id}`;
 
   const heading = isTv
     ? `${show.name} — S${String(seasonNum).padStart(2, "0")}E${String(episodeNum).padStart(2, "0")}`
@@ -103,7 +87,7 @@ export default async function Watch({ params, searchParams }) {
         <div className="mt-4 flex items-center justify-between gap-3">
           {prevEp !== null ? (
             <Link
-              href={`/watch/${id}?type=tv&season=${seasonNum}&episode=${prevEp}${server !== "2embed" ? `&server=${server}` : ""}`}
+              href={`/watch/${id}?type=tv&season=${seasonNum}&episode=${prevEp}`}
               className="btn btn-ghost px-4 py-2 text-sm"
             >
               ← E{prevEp}
@@ -113,7 +97,7 @@ export default async function Watch({ params, searchParams }) {
           )}
           {nextEp !== null ? (
             <Link
-              href={`/watch/${id}?type=tv&season=${seasonNum}&episode=${nextEp}${server !== "2embed" ? `&server=${server}` : ""}`}
+              href={`/watch/${id}?type=tv&season=${seasonNum}&episode=${nextEp}`}
               className="btn btn-primary px-4 py-2 text-sm"
             >
               E{nextEp} →
@@ -123,31 +107,6 @@ export default async function Watch({ params, searchParams }) {
           )}
         </div>
       )}
-
-      {/* Server switcher */}
-      <div className="mt-4 flex items-center gap-2 text-sm">
-        <span className="text-[#948c9e]">Server:</span>
-        <Link
-          href={serverHref("2embed")}
-          className={`rounded-full px-3.5 py-1.5 transition-colors ${
-            server === "2embed"
-              ? "bg-[#e8b44d] font-semibold text-[#0b0a10]"
-              : "border border-[#2b2436] text-[#948c9e] hover:border-[#e8b44d]/50 hover:text-[#f4efe6]"
-          }`}
-        >
-          2Embed
-        </Link>
-        <Link
-          href={serverHref("vidsrc")}
-          className={`rounded-full px-3.5 py-1.5 transition-colors ${
-            server === "vidsrc"
-              ? "bg-[#e8b44d] font-semibold text-[#0b0a10]"
-              : "border border-[#2b2436] text-[#948c9e] hover:border-[#e8b44d]/50 hover:text-[#f4efe6]"
-          }`}
-        >
-          VidSrc
-        </Link>
-      </div>
 
       {(isTv ? (current?.overview ?? show.overview) : movie.overview) && (
         <p className="mt-6 max-w-prose text-sm leading-relaxed text-[#948c9e]">
