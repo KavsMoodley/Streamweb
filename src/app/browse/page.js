@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { tmdb } from "@/lib/tmdb-server";
+import BrowseFilters from "../components/browse-filters";
 
 const SORTS = [
   { key: "popular", label: "Popular" },
@@ -70,53 +71,7 @@ export default async function Browse({ searchParams }) {
         Browse {isTv ? "Series" : "Movies"}
       </h1>
 
-      {/* Type toggle */}
-      <div className="mt-5 flex gap-2">
-        <Link
-          href={buildHref({ ...params, type: "movie", genre: null, page: 1 })}
-          className={`chip ${!isTv ? "chip-gold" : ""}`}
-        >
-          🎬 Movies
-        </Link>
-        <Link
-          href={buildHref({ ...params, type: "tv", genre: null, page: 1 })}
-          className={`chip ${isTv ? "chip-gold" : ""}`}
-        >
-          📺 Series
-        </Link>
-      </div>
-
-      {/* Sort */}
-      <div className="mt-4 flex flex-wrap gap-2">
-        {SORTS.map((s) => (
-          <Link
-            key={s.key}
-            href={buildHref({ ...params, sort: s.key, page: 1 })}
-            className={`chip ${params.sort === s.key ? "chip-gold" : ""}`}
-          >
-            {s.label}
-          </Link>
-        ))}
-      </div>
-
-      {/* Genres */}
-      <div className="mt-4 flex flex-wrap gap-2">
-        <Link
-          href={buildHref({ ...params, genre: null, page: 1 })}
-          className={`chip ${params.genre === null ? "chip-gold" : ""}`}
-        >
-          All genres
-        </Link>
-        {genres.map((g) => (
-          <Link
-            key={g.id}
-            href={buildHref({ ...params, genre: g.id, page: 1 })}
-            className={`chip ${params.genre === g.id ? "chip-gold" : ""}`}
-          >
-            {g.name}
-          </Link>
-        ))}
-      </div>
+      <BrowseFilters type={params.type} genre={params.genre} sort={params.sort} genres={genres} />
 
       {/* Results */}
       {results.length === 0 ? (

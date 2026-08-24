@@ -61,7 +61,8 @@ export default async function Home() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-7xl px-2 sm:px-4">
+      {/* Mobile-only search (header search is hidden on small screens) */}
+      <div className="mt-6 flex justify-center px-4 sm:hidden">
         <SearchBar />
       </div>
 

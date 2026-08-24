@@ -81,9 +81,8 @@ export default function SearchBar() {
   };
 
   return (
-    <div ref={wrapperRef} className="relative flex justify-center pt-8">
-      <div className="relative w-full max-w-md">
-        <form onSubmit={handleSearch} className="flex items-center gap-2">
+    <div ref={wrapperRef} className="relative w-full max-w-md">
+      <form onSubmit={handleSearch} className="flex items-center gap-2">
           <div className="relative flex-1">
             <svg
               className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f6879]"
@@ -177,9 +176,8 @@ export default function SearchBar() {
                   </div>
                 </button>
               ))}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

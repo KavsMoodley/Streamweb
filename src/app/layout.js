@@ -1,6 +1,7 @@
 import "./globals.css";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
+import SearchBar from "./components/searchBar";
 
 export const metadata = {
   title: "streamWeb",
@@ -12,14 +13,19 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="flex min-h-dvh flex-col">
         <header className="sticky top-0 z-50 border-b border-[#2b2436]/80 bg-[#0b0a10]/85 backdrop-blur-md">
-          <nav className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6">
+          <nav className="mx-auto flex w-full max-w-7xl items-center gap-4 px-4 py-3 sm:px-6">
             <Link
               href="/"
-              className="text-xl font-bold tracking-[0.08em] text-[#e8b44d] transition-colors hover:text-[#f4d488]"
+              className="shrink-0 text-xl font-bold tracking-[0.08em] text-[#e8b44d] transition-colors hover:text-[#f4d488]"
             >
               🎬 streamWeb
             </Link>
-            <div className="flex items-center gap-5">
+
+            <div className="hidden flex-1 justify-center px-2 sm:flex">
+              <SearchBar />
+            </div>
+
+            <div className="ml-auto flex shrink-0 items-center gap-5 sm:ml-0">
               <Link
                 href="/browse?type=movie"
                 className="text-sm font-medium text-[#948c9e] transition-colors hover:text-[#e8b44d]"
