@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { tmdb } from "@/lib/tmdb-server";
+import SeasonSelect from "../../../../components/season-select";
 
 export default async function SeasonPage({ params }) {
   const { id, num } = await params;
@@ -32,10 +33,11 @@ export default async function SeasonPage({ params }) {
         ← Back to {show.name}
       </Link>
 
-      <div className="mt-6 flex flex-wrap items-end gap-4">
+      <div className="mt-6 flex flex-wrap items-center gap-4">
         <h1 className="font-marquee text-4xl tracking-wide text-[#e8b44d] md:text-5xl">
           {season.name}
         </h1>
+        <SeasonSelect tvId={id} current={Number(num)} seasons={show.seasons ?? []} />
         <span className="chip mb-1">
           {episodes.length} episode{episodes.length === 1 ? "" : "s"}
         </span>

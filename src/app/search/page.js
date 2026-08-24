@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { tmdb } from "@/lib/tmdb-server";
+import RatingBadge from "../components/rating-badge";
 
 export default async function SearchResults({ searchParams }) {
   const query = ((await searchParams).query ?? "")
@@ -67,11 +68,7 @@ export default async function SearchResults({ searchParams }) {
                   className="group"
                 >
                   <div className="ticket-card relative aspect-[2/3] overflow-hidden rounded-lg">
-                    {item.vote_average > 0 && (
-                      <span className="rating-badge absolute right-2 top-2 z-10 rounded-md px-2 py-1 text-xs font-bold">
-                        ★ {item.vote_average.toFixed(1)}
-                      </span>
-                    )}
+                    <RatingBadge score={item.vote_average} />
                     <span
                       className={`absolute left-2 top-2 z-10 rounded-md px-2 py-1 text-[10px] font-bold tracking-wide ${
                         isTv

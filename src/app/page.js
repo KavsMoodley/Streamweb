@@ -99,11 +99,30 @@ export default async function Home() {
 
       <div className="mt-8 space-y-4">
         <SavedRows />
-        <MovieRow title="Trending Shows" movies={trendingTv.results} type="tv" />
-        <MovieRow title="Popular" movies={popular.results} />
-        <MovieRow title="Popular Series" movies={popularTv.results} type="tv" />
-        <MovieRow title="Top Rated" movies={topRated.results} />
-        <MovieRow title="Top Rated Series" movies={topRatedTv.results} type="tv" />
+        <MovieRow
+          title="Trending Shows"
+          movies={trendingTv.results}
+          type="tv"
+          href="/browse?type=tv&sort=popular"
+        />
+        <MovieRow title="Popular" movies={popular.results} href="/browse?type=movie" />
+        <MovieRow
+          title="Popular Series"
+          movies={popularTv.results}
+          type="tv"
+          href="/browse?type=tv"
+        />
+        <MovieRow
+          title="Top Rated"
+          movies={topRated.results}
+          href="/browse?type=movie&sort=rating"
+        />
+        <MovieRow
+          title="Top Rated Series"
+          movies={topRatedTv.results}
+          type="tv"
+          href="/browse?type=tv&sort=rating"
+        />
         <MovieRow title="Now Playing" movies={nowPlaying.results} />
         <MovieRow title="On The Air" movies={onTheAir.results} type="tv" />
         <MovieRow title="Upcoming" movies={upcoming.results} />

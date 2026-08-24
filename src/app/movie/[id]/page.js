@@ -5,6 +5,25 @@ import { tmdb } from "@/lib/tmdb-server";
 import CastRow from "../../components/castrow";
 import WatchlistButton from "../../components/watchlist-button";
 import RecordProgress from "../../components/record-progress";
+import TrailerModal from "../../components/trailer-modal";
+import MovieRow from "../../components/movierow";
+
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  if (!/^\d+$/.test(id)) return { title: "streamWeb" };
+  try {
+    const movie = await tmdb(`/movie/${id}`);
+    return {
+      title: `${movie.title} — streamWeb`,
+      description: (movie.overview ?? "").slice(0, 160),
+      openGraph: movie.poster_path
+        ? { images: [`https://image.tmdb.org/t/p/w780${movie.poster_path}`] }
+        : undefined,
+    };
+  } catch {
+    return { title: "streamWeb" };
+  }
+}
 
 export default async function MovieDetail({ params }) {
   const { id } = await params;
@@ -12,10 +31,18 @@ export default async function MovieDetail({ params }) {
 
   let movie;
   try {
-    movie = await tmdb(`/movie/${id}`, { append_to_response: "credits" });
+    movie = await tmdb(`/movie/${id}`, {
+      append_to_response: "credits,videos,recommendations",
+    });
   } catch {
     notFound();
   }
+
+  const trailer = (movie.videos?.results ?? []).find(
+    (v) => v.site === "YouTube" && v.type === "Trailer" && v.official
+  ) ?? (movie.videos?.results ?? []).find(
+    (v) => v.site === "YouTube" && v.type === "Trailer"
+  );
 
   const year = movie.release_date ? movie.release_date.slice(0, 4) : null;
   const runtime =
@@ -105,6 +132,7 @@ export default async function MovieDetail({ params }) {
                     : null,
                 }}
               />
+              <TrailerModal videoKey={trailer?.key} title={movie.title} />
               <a
                 href={`https://www.themoviedb.org/movie/${id}`}
                 target="_blank"
@@ -118,6 +146,15 @@ export default async function MovieDetail({ params }) {
         </div>
 
         <CastRow cast={movie.credits?.cast ?? []} />
+
+        {(movie.recommendations?.results?.length ?? 0) > 0 && (
+          <div className="mt-6">
+            <MovieRow
+              title="More Like This"
+              movies={movie.recommendations.results.slice(0, 14)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

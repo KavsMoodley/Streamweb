@@ -4,6 +4,25 @@ import { notFound } from "next/navigation";
 import { tmdb } from "@/lib/tmdb-server";
 import CastRow from "../../components/castrow";
 import WatchlistButton from "../../components/watchlist-button";
+import TrailerModal from "../../components/trailer-modal";
+import MovieRow from "../../components/movierow";
+
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  if (!/^\d+$/.test(id)) return { title: "streamWeb" };
+  try {
+    const show = await tmdb(`/tv/${id}`);
+    return {
+      title: `${show.name} — streamWeb`,
+      description: (show.overview ?? "").slice(0, 160),
+      openGraph: show.poster_path
+        ? { images: [`https://image.tmdb.org/t/p/w780${show.poster_path}`] }
+        : undefined,
+    };
+  } catch {
+    return { title: "streamWeb" };
+  }
+}
 
 export default async function TvDetail({ params }) {
   const { id } = await params;
@@ -11,10 +30,18 @@ export default async function TvDetail({ params }) {
 
   let show;
   try {
-    show = await tmdb(`/tv/${id}`, { append_to_response: "credits" });
+    show = await tmdb(`/tv/${id}`, {
+      append_to_response: "credits,videos,recommendations",
+    });
   } catch {
     notFound();
   }
+
+  const trailer = (show.videos?.results ?? []).find(
+    (v) => v.site === "YouTube" && v.type === "Trailer" && v.official
+  ) ?? (show.videos?.results ?? []).find(
+    (v) => v.site === "YouTube" && v.type === "Trailer"
+  );
 
   const startYear = show.first_air_date
     ? show.first_air_date.slice(0, 4)
@@ -118,6 +145,7 @@ export default async function TvDetail({ params }) {
                   subtitle: years,
                 }}
               />
+              <TrailerModal videoKey={trailer?.key} title={show.name} />
               <a
                 href={`https://www.themoviedb.org/tv/${id}`}
                 target="_blank"
@@ -190,6 +218,17 @@ export default async function TvDetail({ params }) {
               ))}
             </div>
           </section>
+        )}
+
+        {(show.recommendations?.results?.length ?? 0) > 0 && (
+          <div className="mt-6">
+            <MovieRow
+              title="More Like This"
+              movies={show.recommendations.results
+                .filter((r) => r.poster_path)
+                .slice(0, 14)}
+            />
+          </div>
         )}
       </div>
     </div>
