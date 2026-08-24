@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const isProd = process.env.NODE_ENV === "production";
 
 const csp = [
@@ -30,6 +35,9 @@ if (isProd) {
 }
 
 const nextConfig = {
+  turbopack: {
+    root: __dirname,
+  },
   images: {
     remotePatterns: [
       {

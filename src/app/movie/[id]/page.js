@@ -3,6 +3,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { tmdb } from "@/lib/tmdb-server";
 import CastRow from "../../components/castrow";
+import WatchlistButton from "../../components/watchlist-button";
+import RecordProgress from "../../components/record-progress";
 
 export default async function MovieDetail({ params }) {
   const { id } = await params;
@@ -92,6 +94,17 @@ export default async function MovieDetail({ params }) {
               <Link href={`/watch/${id}`} className="btn btn-primary px-8 py-3">
                 ▶ Watch now
               </Link>
+              <WatchlistButton
+                item={{
+                  id: Number(id),
+                  type: "movie",
+                  title: movie.title,
+                  poster_path: movie.poster_path,
+                  subtitle: movie.release_date
+                    ? movie.release_date.slice(0, 4)
+                    : null,
+                }}
+              />
               <a
                 href={`https://www.themoviedb.org/movie/${id}`}
                 target="_blank"

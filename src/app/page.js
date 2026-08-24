@@ -3,10 +3,12 @@ import Image from "next/image";
 import { tmdb } from "@/lib/tmdb-server";
 import SearchBar from "./components/searchBar";
 import MovieRow from "./components/movierow";
+import SavedRows from "./components/saved-rows";
 
 export default async function Home() {
-  const [popular, topRated, nowPlaying, upcoming, trendingTv, popularTv, topRatedTv, onTheAir] =
+  const [trendingAll, popular, topRated, nowPlaying, upcoming, trendingTv, popularTv, topRatedTv, onTheAir] =
     await Promise.all([
+      tmdb("/trending/all/week"),
       tmdb("/movie/popular"),
       tmdb("/movie/top_rated"),
       tmdb("/movie/now_playing"),
@@ -17,8 +19,25 @@ export default async function Home() {
       tmdb("/tv/on_the_air"),
     ]);
 
-  const featured = popular.results[0];
-  const year = featured.release_date ? featured.release_date.slice(0, 4) : null;
+  const featured = (trendingAll.results ?? []).find(
+    (r) => (r.title ?? r.name) && r.backdrop_path
+  );
+  if (!featured) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
+        <p className="font-marquee text-3xl text-[#e8b44d]">
+          Nothing in the projector tonight
+        </p>
+        <p className="mt-2 text-sm text-[#948c9e]">
+          We couldn&apos;t reach the listing service. Please try again later.
+        </p>
+      </div>
+    );
+  }
+  const isTvFeature = featured.media_type === "tv";
+  const featuredName = featured.title ?? featured.name;
+  const featuredDate = featured.release_date ?? featured.first_air_date;
+  const year = featuredDate ? featuredDate.slice(0, 4) : null;
 
   return (
     <div>
@@ -38,9 +57,11 @@ export default async function Home() {
 
         <div className="relative mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6">
           <div className="max-w-2xl">
-            <span className="chip chip-gold fade-up">Featured today</span>
+            <span className="chip chip-gold fade-up">
+              #{featured.media_type === "tv" ? "1 Series" : "1 Movie"} trending this week
+            </span>
             <h1 className="font-marquee mt-3 text-6xl leading-[0.95] text-[#e8b44d] text-balance fade-up fade-up-1 md:text-7xl">
-              {featured.title}
+              {featuredName}
             </h1>
             <div className="mt-3 flex flex-wrap items-center gap-2 fade-up fade-up-2">
               {year && <span className="chip">{year}</span>}
@@ -50,10 +71,20 @@ export default async function Home() {
               {featured.overview}
             </p>
             <div className="mt-6 flex flex-wrap gap-3 fade-up fade-up-3">
-              <Link href={`/watch/${featured.id}`} className="btn btn-primary">
+              <Link
+                href={
+                  isTvFeature
+                    ? `/watch/${featured.id}?type=tv&season=1&episode=1`
+                    : `/watch/${featured.id}`
+                }
+                className="btn btn-primary"
+              >
                 ▶ Watch now
               </Link>
-              <Link href={`/movie/${featured.id}`} className="btn btn-ghost">
+              <Link
+                href={isTvFeature ? `/tv/${featured.id}` : `/movie/${featured.id}`}
+                className="btn btn-ghost"
+              >
                 More info
               </Link>
             </div>
@@ -67,6 +98,7 @@ export default async function Home() {
       </div>
 
       <div className="mt-8 space-y-4">
+        <SavedRows />
         <MovieRow title="Trending Shows" movies={trendingTv.results} type="tv" />
         <MovieRow title="Popular" movies={popular.results} />
         <MovieRow title="Popular Series" movies={popularTv.results} type="tv" />

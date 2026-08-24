@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { tmdb } from "@/lib/tmdb-server";
 import CastRow from "../../components/castrow";
+import WatchlistButton from "../../components/watchlist-button";
 
 export default async function TvDetail({ params }) {
   const { id } = await params;
@@ -108,6 +109,15 @@ export default async function TvDetail({ params }) {
                   ▶ Watch S{firstSeason.season_number} E1
                 </Link>
               )}
+              <WatchlistButton
+                item={{
+                  id: Number(id),
+                  type: "tv",
+                  title: show.name,
+                  poster_path: show.poster_path,
+                  subtitle: years,
+                }}
+              />
               <a
                 href={`https://www.themoviedb.org/tv/${id}`}
                 target="_blank"

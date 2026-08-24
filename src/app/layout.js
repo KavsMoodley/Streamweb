@@ -2,10 +2,20 @@ import "./globals.css";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
 import SearchBar from "./components/searchBar";
+import PwaRegister from "./components/pwa-register";
 
 export const metadata = {
   title: "streamWeb",
   description: "Browse and watch popular movies",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/icon-512.png",
+  },
+};
+
+export const viewport = {
+  themeColor: "#0b0a10",
 };
 
 export default function RootLayout({ children }) {
@@ -67,6 +77,7 @@ export default function RootLayout({ children }) {
         </footer>
 
         <Analytics />
+        <PwaRegister />
       </body>
     </html>
   );
